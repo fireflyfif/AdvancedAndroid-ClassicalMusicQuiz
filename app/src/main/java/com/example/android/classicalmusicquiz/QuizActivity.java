@@ -67,7 +67,7 @@ public class QuizActivity extends AppCompatActivity implements View.OnClickListe
 
 
         // Initialize the player view.
-        mPlayerView = (SimpleExoPlayerView) findViewById(R.id.playerView);
+        mPlayerView = findViewById(R.id.playerView);
 
 
         boolean isNewGame = !getIntent().hasExtra(REMAINING_SONGS_KEY);
@@ -125,7 +125,7 @@ public class QuizActivity extends AppCompatActivity implements View.OnClickListe
     private Button[] initializeButtons(ArrayList<Integer> answerSampleIDs) {
         Button[] buttons = new Button[mButtonIDs.length];
         for (int i = 0; i < answerSampleIDs.size(); i++) {
-            Button currentButton = (Button) findViewById(mButtonIDs[i]);
+            Button currentButton = findViewById(mButtonIDs[i]);
             Sample currentSample = Sample.getSampleByID(this, answerSampleIDs.get(i));
             buttons[i] = currentButton;
             currentButton.setOnClickListener(this);
