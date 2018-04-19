@@ -210,17 +210,19 @@ public class QuizActivity extends AppCompatActivity implements View.OnClickListe
             play_pause = getString(R.string.play);
         }
 
-
+        // 2. Create Notification Action for Play/Pause
         NotificationCompat.Action playPauseAction = new NotificationCompat.Action(
                 icon, play_pause,
                 MediaButtonReceiver.buildMediaButtonPendingIntent(this,
                         PlaybackStateCompat.ACTION_PLAY_PAUSE));
 
+        // Create Notification Action for Restart
         NotificationCompat.Action restartAction = new android.support.v4.app.NotificationCompat
                 .Action(R.drawable.exo_controls_previous, getString(R.string.restart),
                 MediaButtonReceiver.buildMediaButtonPendingIntent
                         (this, PlaybackStateCompat.ACTION_SKIP_TO_PREVIOUS));
 
+        // 3. Create a Content Pending Intent that relaunches the quiz activity when it's clicked
         PendingIntent contentPendingIntent = PendingIntent.getActivity
                 (this, 0, new Intent(this, QuizActivity.class), 0);
 
@@ -229,13 +231,14 @@ public class QuizActivity extends AppCompatActivity implements View.OnClickListe
                 .setContentIntent(contentPendingIntent)
                 .setSmallIcon(R.drawable.ic_music_note)
                 .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
+                // 4. Set the Media Session Token and show both of the actions in the Compact view.
                 .addAction(restartAction)
                 .addAction(playPauseAction)
                 .setStyle(new android.support.v4.media.app.NotificationCompat.MediaStyle()
                         .setMediaSession(mMediaSession.getSessionToken())
                         .setShowActionsInCompactView(0,1));
 
-
+        // 5. Use the Notification Manager to deliver the notification
         mNotificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
         mNotificationManager.notify(0, builder.build());
     }
@@ -270,6 +273,8 @@ public class QuizActivity extends AppCompatActivity implements View.OnClickListe
      * Release ExoPlayer.
      */
     private void releasePlayer() {
+        // 7. Call cancelAll on the Notification Manager when the activity is destroyed
+        // so we don't stay around when we don't want to.
         mNotificationManager.cancelAll();
         mExoPlayer.stop();
         mExoPlayer.release();
@@ -399,6 +404,9 @@ public class QuizActivity extends AppCompatActivity implements View.OnClickListe
                     mExoPlayer.getCurrentPosition(), 1f);
         }
         mMediaSession.setPlaybackState(mStateBuilder.build());
+
+        // 6. Call our new Show Notification method in the On player state changed method,
+        // passing in the PlaybackStateCompat object.
         showNotification(mStateBuilder.build());
     }
 
